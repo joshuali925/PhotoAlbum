@@ -5,42 +5,48 @@ import javafx.collections.ObservableList;
 
 public class User {
     public String name;
-    public static ObservableList<User> list = FXCollections.observableArrayList();
+    public ObservableList<Album> albumList = FXCollections.observableArrayList();
 
     public User(String name) {
         this.name = name;
-    }
-
-    public static void initialize() {
-        list.add(new User("admin"));
-        User stock = new User("stock");
-        list.add(stock);
     }
 
     public String getName() {
         return name;
     }
 
-    public static ObservableList<User> getList() {
-        return list;
-    }
-
-    public static User find(String name) {
-        for (User user : list)
-            if (user.name.equals(name))
-                return user;
+    public Album findAlbum(String name) {
+        for (Album album : albumList)
+            if (album.getName().equals(name))
+                return album;
         return null;
     }
 
-    public static boolean add(String name) {
-        if (name.length() == 0 || find(name) != null)
+    public boolean addAlbum(String name) {
+        if (name.length() == 0 || findAlbum(name) != null)
             return false;
-        list.add(new User(name));
+        Album album = new Album(name);
+        album.setUser(this);
+        return albumList.add(album);
+    }
+
+    public boolean deleteAlbum(Album album) {
+        return albumList.remove(album);
+    }
+
+    public boolean renameAlbum(Album target, String name) {
+        for (Album album : albumList) {
+            if (album == target)
+                continue;
+            if (album.name.equals(name))
+                return false;
+        }
+        target.setName(name);
         return true;
     }
 
-    public static boolean delete(User user) {
-        return !user.name.equals("admin") && !user.name.equals("stock") && list.remove(user);
+    public ObservableList<Album> getAlbumList() {
+        return albumList;
     }
 
     @Override

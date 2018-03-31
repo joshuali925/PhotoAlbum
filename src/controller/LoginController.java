@@ -10,6 +10,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import model.User;
+import model.UserList;
 
 public class LoginController {
     @FXML
@@ -17,20 +19,32 @@ public class LoginController {
     @FXML
     Button loginButton;
     private Stage primaryStage;
+    private UserList userList;
 
     public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
+        this.userList = UserList.getInstance();
     }
 
     public void login(ActionEvent e) throws IOException {
-        if (username.getText().trim().equalsIgnoreCase("admin")) {
+        if (username.getText().toLowerCase().equals("admin")) {
             FXMLLoader adminLoader = new FXMLLoader(getClass().getResource("/view/Admin.fxml"));
             Pane adminPane = adminLoader.load();
             AdminController adminController = adminLoader.getController();
             adminController.start(primaryStage);
             primaryStage.setScene(new Scene(adminPane, 450, 300));
+            return;
         }
-        System.out.println(username.getText());
+        User user = userList.findUser(username.getText().toLowerCase());
+        if (user == null) {
+            GeneralMethods.popAlert("User does not exist.");
+            return;
+        }
+        FXMLLoader albumLoader = new FXMLLoader(getClass().getResource("/view/Album.fxml"));
+        Pane albumPane = albumLoader.load();
+        AlbumController albumController = albumLoader.getController();
+        albumController.start(primaryStage, user);
+        primaryStage.setScene(new Scene(albumPane, 450, 300));
     }
 
 }

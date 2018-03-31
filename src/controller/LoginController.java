@@ -28,10 +28,7 @@ public class LoginController {
             Pane adminPane = adminLoader.load();
             AdminController adminController = adminLoader.getController();
             adminController.start(primaryStage);
-            Scene loginScene = new Scene(adminPane, 450, 300);
-            primaryStage.setScene(loginScene);
-            primaryStage.setResizable(false);
-            primaryStage.show();
+            primaryStage.setScene(new Scene(adminPane, 450, 300));
         }
         System.out.println(username.getText());
     }

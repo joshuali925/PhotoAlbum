@@ -8,6 +8,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import model.User;
 
 public class Photos extends Application {
     @Override
@@ -17,10 +18,11 @@ public class Photos extends Application {
         LoginController loginController = loginLoader.getController();
         loginController.start(primaryStage);
 
-        Scene loginScene = new Scene(loginPane, 450, 300);
-        primaryStage.setScene(loginScene);
+        primaryStage.setScene(new Scene(loginPane, 450, 300));
         primaryStage.setResizable(false);
         primaryStage.show();
+        
+        User.initialize();
     }
 
     public static void main(String[] args) {

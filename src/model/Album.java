@@ -1,5 +1,7 @@
 package model;
 
+import java.io.FileNotFoundException;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -33,6 +35,21 @@ public class Album {
         return photoList.size() + "";
     }
 
+    public ObservableList<Photo> getPhotoList() {
+        return photoList;
+    }
+
+    public boolean addPhoto(String path) throws FileNotFoundException {
+        for (Photo photo : photoList)
+            if (photo.getPath().equals(path))
+                return false;
+        return photoList.add(new Photo(path));
+    }
+    
+    public boolean deletePhoto(Photo photo) {
+        return photoList.remove(photo);
+    }
+    
     @Override
     public String toString() {
         return name;

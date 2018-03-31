@@ -68,30 +68,35 @@ public class AlbumController {
 
     public void rename(ActionEvent e) {
         Album album = albumTable.getSelectionModel().getSelectedItem();
+        if (album == null)
+            return;
         TextInputDialog dialog = new TextInputDialog(album.getName());
         dialog.setHeaderText(null);
         dialog.setContentText("New name:");
 
         Optional<String> result = dialog.showAndWait();
-        if (result.isPresent() && user.renameAlbum(album, result.get().toLowerCase())) {
-            albumTable.refresh();
-            return;
+        if (result.isPresent() && !user.renameAlbum(album, result.get().toLowerCase())) {
+            GeneralMethods.popAlert("Invalid or duplicate name.");
         }
-        GeneralMethods.popAlert("Invalid or duplicate name.");
+        albumTable.refresh();
     }
 
     public void delete(ActionEvent e) {
-        if (!GeneralMethods.popConfirm("Delete this album?"))
+        Album album = albumTable.getSelectionModel().getSelectedItem();
+        if (album == null || !GeneralMethods.popConfirm("Delete this album?"))
             return;
-        if (!user.deleteAlbum(albumTable.getSelectionModel().getSelectedItem()))
+        if (!user.deleteAlbum(album))
             GeneralMethods.popAlert("Cannot delete.");
     }
-    
+
     public void open(ActionEvent e) throws IOException {
+        Album album = albumTable.getSelectionModel().getSelectedItem();
+        if (album == null)
+            return;
         FXMLLoader photoLoader = new FXMLLoader(getClass().getResource("/view/Photo.fxml"));
         Pane albumPane = photoLoader.load();
-        AlbumController albumController = photoLoader.getController();
-        albumController.start(primaryStage, user);
+        PhotoController photoController = photoLoader.getController();
+        photoController.start(primaryStage, album);
         primaryStage.setScene(new Scene(albumPane, 450, 300));
     }
 }

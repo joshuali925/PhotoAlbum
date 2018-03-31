@@ -1,5 +1,7 @@
 package model;
 
+import java.io.FileNotFoundException;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -26,8 +28,19 @@ public class User {
         if (name.length() == 0 || findAlbum(name) != null)
             return false;
         Album album = new Album(name);
+
+        //TODO: only for testing
+        try {
+            album.photoList.add(new Photo("D:/Photos/Lightroom/b1.jpg"));
+            album.photoList.add(new Photo("D:/Photos/Lightroom/b2.jpg"));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        
+        
         album.setUser(this);
-        return albumList.add(album);
+        albumList.add(album);
+        return true;
     }
 
     public boolean deleteAlbum(Album album) {

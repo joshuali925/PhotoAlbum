@@ -47,9 +47,10 @@ public class AdminController {
     }
 
     public void delete(ActionEvent e) {
-        if (!GeneralMethods.popConfirm("Delete this user?"))
+        User user = userList.getSelectionModel().getSelectedItem();
+        if (user == null || !GeneralMethods.popConfirm("Delete this user?"))
             return;
-        if (!user.deleteUser(userList.getSelectionModel().getSelectedItem()))
+        if (!this.user.deleteUser(user))
             GeneralMethods.popAlert("Cannot delete.");
     }
 }

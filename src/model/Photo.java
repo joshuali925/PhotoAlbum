@@ -59,6 +59,10 @@ public class Photo {
     public String getDate() {
         return dateFormatter.format(date);
     }
+    
+    public long getTimestamp() {
+        return date;
+    }
 
     public String getCaption() {
         return caption;

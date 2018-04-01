@@ -50,6 +50,7 @@ public class AlbumController {
         ObservableList<Album> albumList = user.getAlbumList();
         nameCol.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getName()));
         photosCol.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getPhotoNumber()));
+        dateCol.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getRange()));
         albumTable.setItems(albumList);
         if (albumList.size() > 0)
             albumTable.getSelectionModel().select(0);

@@ -26,6 +26,13 @@ public class GeneralMethods {
         alert.setContentText(message);
         alert.showAndWait();
     }
+    public static void popInfo(String message) {
+        Alert alert = new Alert(AlertType.INFORMATION);
+        alert.setTitle("Alert");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
 
     public static boolean popConfirm(String message) {
         Alert alert = new Alert(AlertType.CONFIRMATION);

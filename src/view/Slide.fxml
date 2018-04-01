@@ -13,6 +13,11 @@
 	xmlns:fx="http://javafx.com/fxml/1"
 	fx:controller="controller.SlideController">
 	<children>
+		<Button fx:id="backButton" layoutX="176.0" layoutY="28.0"
+			mnemonicParsing="false" onAction="#back" text="Back" />
+		<ImageView fx:id="imageView" fitHeight="161.0"
+			fitWidth="262.0" layoutX="169.0" layoutY="60.0" pickOnBounds="true"
+			preserveRatio="true" />
 		<TableView fx:id="tagTable" layoutX="4.0" layoutY="33.0"
 			prefHeight="263.0" prefWidth="152.0">
 			<columns>
@@ -31,9 +36,6 @@
 			prefHeight="25.0" prefWidth="161.0" text="Name" />
 		<Label fx:id="dateLabel" layoutX="335.0" layoutY="7.0"
 			prefHeight="17.0" prefWidth="110.0" text="Date" />
-		<ImageView fx:id="imageView" fitHeight="161.0"
-			fitWidth="262.0" layoutX="169.0" layoutY="60.0" pickOnBounds="true"
-			preserveRatio="true" />
 		<Label fx:id="captionLabel" layoutX="177.0" layoutY="224.0"
 			text="Caption:" />
 		<Button fx:id="copyButton" layoutX="219.0" layoutY="28.0"
@@ -44,7 +46,5 @@
 			mnemonicParsing="false" onAction="#prev" text="Prev" />
 		<Button fx:id="nextButton" layoutX="336.0" layoutY="249.0"
 			mnemonicParsing="false" onAction="#next" text="Next" />
-		<Button fx:id="backButton" layoutX="176.0" layoutY="28.0"
-			mnemonicParsing="false" onAction="#back" text="Back" />
 	</children>
 </AnchorPane>

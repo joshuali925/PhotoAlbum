@@ -31,8 +31,8 @@ public class User {
 
         // TODO: only for testing
         try {
-            album.photoList.add(new Photo("D:/Photos/Lightroom/b1.jpg", 0));
-            album.photoList.add(new Photo("D:/Photos/Lightroom/b2.jpg", 1));
+            album.addPhoto("D:/Photos/Lightroom/b1.jpg", 10241253);
+            album.addPhoto("D:/Photos/Lightroom/b2.jpg", 102412532);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }

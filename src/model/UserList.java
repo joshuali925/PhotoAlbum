@@ -41,7 +41,9 @@ public class UserList {
     }
 
     public boolean deleteUser(User user) {
-        return !user.name.equals("admin") && !user.name.equals("stock") && userList.remove(user);
+        // return !user.name.equals("admin") && !user.name.equals("stock") &&
+        // userList.remove(user);
+        return userList.remove(user);
     }
 
 }

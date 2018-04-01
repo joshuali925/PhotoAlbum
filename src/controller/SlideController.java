@@ -1,6 +1,8 @@
 package controller;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 import javafx.beans.property.SimpleStringProperty;
@@ -10,6 +12,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -74,20 +77,31 @@ public class SlideController {
         valueCol.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getValue()));
     }
 
+    public void centerImage() {
+        Image image = imageView.getImage();
+        if (image == null)
+            return;
+        double x = imageView.getFitWidth() / image.getWidth();
+        double y = imageView.getFitHeight() / image.getHeight();
+        double adjust = x >= y ? y : x;
+        imageView.setX((imageView.getFitWidth() - image.getWidth() * adjust) / 2);
+        imageView.setY((imageView.getFitHeight() - image.getHeight() * adjust) / 2);
+    }
+
     public void addTag(ActionEvent e) {
         TextInputDialog dialog = new TextInputDialog();
         dialog.setHeaderText(null);
         dialog.setContentText("Tag key:");
         Optional<String> result = dialog.showAndWait();
-        if (result.isPresent()) {
-            String key = result.get();
-            dialog = new TextInputDialog();
-            dialog.setHeaderText(null);
-            dialog.setContentText("Tag value:");
-            result = dialog.showAndWait();
-            if (result.isPresent() && !photo.addTag(key, result.get()))
-                GeneralMethods.popAlert("Invalid or duplicate tag.");
-        }
+        if (!result.isPresent())
+            return;
+        String key = result.get();
+        dialog = new TextInputDialog();
+        dialog.setHeaderText(null);
+        dialog.setContentText("Tag value:");
+        result = dialog.showAndWait();
+        if (result.isPresent() && !photo.addTag(key, result.get()))
+            GeneralMethods.popAlert("Invalid or duplicate tag.");
     }
 
     public void removeTag(ActionEvent e) {
@@ -107,23 +121,48 @@ public class SlideController {
         photoController.select(photo);
     }
 
-    public void centerImage() {
-        Image image = imageView.getImage();
-        if (image == null)
+    public void copy(ActionEvent e) throws FileNotFoundException {
+        List<Album> choices = user.getAlbumList();
+        ChoiceDialog<Album> dialog = new ChoiceDialog<Album>(choices.get(0), choices);
+        dialog.setHeaderText(null);
+        dialog.setContentText("Copy to album:");
+        Optional<Album> result = dialog.showAndWait();
+        if (!result.isPresent() || result.get() == album)
             return;
-        double x = imageView.getFitWidth() / image.getWidth();
-        double y = imageView.getFitHeight() / image.getHeight();
-        double adjust = x >= y ? y : x;
-        imageView.setX((imageView.getFitWidth() - image.getWidth() * adjust) / 2);
-        imageView.setY((imageView.getFitHeight() - image.getHeight() * adjust) / 2);
+        Album targetAlbum = result.get();
+        if (!targetAlbum.addPhoto(photo.getPath(), photo.getTimestamp()))
+            GeneralMethods.popAlert("Photo already exists in " + targetAlbum.getName() + ".");
     }
 
-    public void copy(ActionEvent e) {
-
-    }
-
-    public void move(ActionEvent e) {
-
+    public void move(ActionEvent e) throws IOException {
+        List<Album> choices = user.getAlbumList();
+        ChoiceDialog<Album> dialog = new ChoiceDialog<Album>(choices.get(0), choices);
+        dialog.setHeaderText(null);
+        dialog.setContentText("Move to album:");
+        Optional<Album> result = dialog.showAndWait();
+        if (!result.isPresent() || result.get() == album)
+            return;
+        Album targetAlbum = result.get();
+        if (!targetAlbum.addPhoto(photo.getPath(), photo.getTimestamp())) {
+            GeneralMethods.popAlert("Photo already exists in " + targetAlbum.getName() + ".");
+            return;
+        }
+        ObservableList<Photo> photoList = album.getPhotoList();
+        int index = photoList.indexOf(photo);
+        album.deletePhoto(photo);
+        if (photoList.size() == 0) {
+            GeneralMethods.popInfo("No more left.");
+            back(e);
+            return;
+        }
+        if (index == photoList.size())
+            index--;
+        FXMLLoader slideLoader = new FXMLLoader(getClass().getResource("/view/Slide.fxml"));
+        Pane slidePane = slideLoader.load();
+        Photo newPhoto = photoList.get(index);
+        SlideController slideController = slideLoader.getController();
+        slideController.start(primaryStage, album, newPhoto);
+        primaryStage.setScene(new Scene(slidePane, 450, 300));
     }
 
     public void prev(ActionEvent e) throws IOException {

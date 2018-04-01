@@ -3,6 +3,7 @@ package controller;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 import javafx.event.ActionEvent;
@@ -55,9 +56,18 @@ public class PhotoController {
 
     public void add(ActionEvent e) throws FileNotFoundException {
         FileChooser chooser = new FileChooser();
-        File file = chooser.showOpenDialog(primaryStage);
-        if (file != null && !album.addPhoto(file.getAbsolutePath(), file.lastModified()))
-            GeneralMethods.popAlert("Invalid or duplicate photo.");
+        List<File> files = chooser.showOpenMultipleDialog(primaryStage);
+        if (files == null)
+            return;
+        if (files.size() > 10) {
+            GeneralMethods.popAlert("Please choose less than 10 photos at once.");
+            return;
+        }
+        int counter = 0;
+        for (File file : files)
+            if (file != null && album.addPhoto(file.getAbsolutePath(), file.lastModified()))
+                counter++;
+        GeneralMethods.popInfo("Imported " + counter + " photo" + (counter > 1 ? "s." : "."));
     }
 
     public void recaption(ActionEvent e) {

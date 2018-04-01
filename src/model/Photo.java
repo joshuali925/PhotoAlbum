@@ -7,6 +7,7 @@ import java.text.SimpleDateFormat;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
 public class Photo {
     public String name;
@@ -15,16 +16,22 @@ public class Photo {
     public ObservableList<Tag> tags;
     public long date;
     public Image image;
+    public ImageView thumbnail;
     public SimpleDateFormat dateFormatter = new SimpleDateFormat("M/dd/yyyy HH:mm:ss");
 
     public Photo(String path, long date) throws FileNotFoundException {
         int index = Math.max(path.lastIndexOf("\\"), path.lastIndexOf("/")) + 1;
         name = path.substring(index);
         this.path = path;
+        this.caption = "";
         this.date = date;
         tags = FXCollections.observableArrayList();
         FileInputStream input = new FileInputStream(path);
         image = new Image(input);
+        thumbnail = new ImageView(image);
+        thumbnail.setFitHeight(40);
+        thumbnail.setFitWidth(40);
+        thumbnail.setPreserveRatio(true);
     }
 
     public ObservableList<Tag> getTags() {
@@ -46,6 +53,10 @@ public class Photo {
 
     public Image getImage() {
         return image;
+    }
+    
+    public ImageView getThumbnail() {
+        return thumbnail;
     }
 
     public String getPath() {

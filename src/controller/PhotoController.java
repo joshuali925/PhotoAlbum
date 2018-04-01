@@ -12,6 +12,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.layout.Pane;
@@ -46,6 +47,23 @@ public class PhotoController {
         photoList.setItems(album.getPhotoList());
         title.setText("Photos in " + album);
 
+        photoList.setCellFactory(cell -> new ListCell<Photo>() {
+            @Override
+            public void updateItem(Photo name, boolean empty) {
+                super.updateItem(name, empty);
+                if (empty) {
+                    setText(null);
+                    setGraphic(null);
+                } else {
+                    if (name.getCaption().length() > 0)
+                        setText(name.getName() + " (" + name.getCaption() + ")");
+                    else
+                        setText(name.getName());
+                    setGraphic(name.getThumbnail());
+                }
+            }
+        });
+
         if (album.getPhotoList().size() > 0)
             photoList.getSelectionModel().select(0);
     }
@@ -78,8 +96,10 @@ public class PhotoController {
         dialog.setHeaderText(null);
         dialog.setContentText("Caption:");
         Optional<String> result = dialog.showAndWait();
-        if (result.isPresent())
-            photo.setCaption((result.get().toLowerCase()));
+        if (!result.isPresent())
+            return;
+        photo.setCaption((result.get().toLowerCase()));
+        photoList.refresh();
     }
 
     public void delete(ActionEvent e) {

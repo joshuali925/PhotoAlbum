@@ -39,11 +39,11 @@ public class Album {
         return photoList;
     }
 
-    public boolean addPhoto(String path) throws FileNotFoundException {
+    public boolean addPhoto(String path, long date) throws FileNotFoundException {
         for (Photo photo : photoList)
             if (photo.getPath().equals(path))
                 return false;
-        return photoList.add(new Photo(path));
+        return photoList.add(new Photo(path,date));
     }
     
     public boolean deletePhoto(Photo photo) {

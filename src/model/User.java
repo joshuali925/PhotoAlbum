@@ -29,15 +29,14 @@ public class User {
             return false;
         Album album = new Album(name);
 
-        //TODO: only for testing
+        // TODO: only for testing
         try {
-            album.photoList.add(new Photo("D:/Photos/Lightroom/b1.jpg"));
-            album.photoList.add(new Photo("D:/Photos/Lightroom/b2.jpg"));
+            album.photoList.add(new Photo("D:/Photos/Lightroom/b1.jpg", 0));
+            album.photoList.add(new Photo("D:/Photos/Lightroom/b2.jpg", 1));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-        
-        
+
         album.setUser(this);
         albumList.add(album);
         return true;

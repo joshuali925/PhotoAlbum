@@ -27,6 +27,8 @@ public class LoginController {
     }
 
     public void login(ActionEvent e) throws IOException {
+        if (username.getText().length() == 0)
+            return;
         if (username.getText().toLowerCase().equals("admin")) {
             FXMLLoader adminLoader = new FXMLLoader(getClass().getResource("/view/Admin.fxml"));
             Pane adminPane = adminLoader.load();

@@ -10,6 +10,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextInputDialog;
@@ -37,14 +38,16 @@ public class AlbumController {
     Button deleteButton;
     @FXML
     Button logoutButton;
+    @FXML
+    Label title;
     private Stage primaryStage;
     private User user;
-    private ObservableList<Album> albumList;
 
     public void start(Stage primaryStage, User user) {
         this.primaryStage = primaryStage;
         this.user = user;
-        albumList = user.getAlbumList();
+        title.setText(user+"'s album");
+        ObservableList<Album> albumList = user.getAlbumList();
         nameCol.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getName()));
         photosCol.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getPhotoNumber()));
         albumTable.setItems(albumList);
@@ -87,6 +90,10 @@ public class AlbumController {
             return;
         if (!user.deleteAlbum(album))
             GeneralMethods.popAlert("Cannot delete.");
+    }
+
+    public void select(Album album) {
+        albumTable.getSelectionModel().select(album);
     }
 
     public void open(ActionEvent e) throws IOException {

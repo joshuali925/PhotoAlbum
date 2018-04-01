@@ -1,20 +1,76 @@
 package model;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.util.ArrayList;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
-public class UserList {
-    public ObservableList<User> userList = FXCollections.observableArrayList();
-    public static UserList instance = null;
+public class UserList implements Serializable {
+    private transient ObservableList<User> userList = null;
+    private ArrayList<User> userListData = new ArrayList<User>();
+    private static UserList instance = null;
 
-    public UserList() {
+    private static final String storeDir = "./data";
+    private static final String storeFile = "users.dat";
+
+    private UserList() {
         User stock = new User("stock");
-        userList.add(stock);
+        // TODO: stock account
+        userListData.add(stock);
         stock.addAlbum("abc");
         setInstance();
     }
 
+    public static void writeApp() {
+        try {
+            File directory = new File(storeDir);
+            if (!directory.exists())
+                directory.mkdirs();
+            ObjectOutputStream oos = new ObjectOutputStream(
+                    new FileOutputStream(storeDir + File.separator + storeFile));
+            oos.writeObject(getInstance());
+            oos.close();
+        } catch (FileNotFoundException e) {
+            System.err.println("File not found");
+            e.printStackTrace();
+        } catch (IOException e) {
+            System.err.println("IOException");
+            e.printStackTrace();
+        }
+    }
+
+    public static UserList readApp() {
+        UserList data = null;
+        try {
+            FileInputStream is = new FileInputStream(storeDir + File.separator + storeFile);
+            ObjectInputStream ois = new ObjectInputStream(is);
+            data = (UserList) ois.readObject();
+            ois.close();
+        } catch (FileNotFoundException e) {
+            // System.err.println("First time user (file not found)");
+            data = new UserList();
+        } catch (IOException e) {
+            System.err.println("IOException");
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            System.err.println("Class not found");
+            e.printStackTrace();
+        }
+        instance = data;
+        return data;
+    }
+
     public static UserList getInstance() {
+        if (instance == null)
+            instance = new UserList();
         return instance;
     }
 
@@ -24,26 +80,31 @@ public class UserList {
     }
 
     public ObservableList<User> getUserList() {
+        if (userList == null)
+            userList = FXCollections.observableArrayList(userListData);
         return userList;
     }
 
     public User findUser(String name) {
-        for (User user : userList)
-            if (user.name.equals(name))
+        for (User user : userListData)
+            if (user.getName().equals(name))
                 return user;
         return null;
     }
 
     public boolean addUser(String name) {
+        if (userList == null)
+            userList = FXCollections.observableArrayList(userListData);
         if (name.length() == 0 || findUser(name) != null)
             return false;
-        return userList.add(new User(name));
+        User user = new User(name);
+        return userList.add(user) && userListData.add(user);
     }
 
     public boolean deleteUser(User user) {
-        // return !user.name.equals("admin") && !user.name.equals("stock") &&
-        // userList.remove(user);
-        return userList.remove(user);
+        if (userList == null)
+            userList = FXCollections.observableArrayList(userListData);
+        return userList.remove(user) && userListData.remove(user);
     }
 
 }

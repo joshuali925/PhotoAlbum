@@ -1,6 +1,7 @@
 package controller;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.Optional;
 
 import javafx.event.ActionEvent;
@@ -12,7 +13,7 @@ import javafx.stage.Stage;
 import model.User;
 import model.UserList;
 
-public class AdminController {
+public class AdminController implements Serializable {
     @FXML
     Button logoutButton;
     @FXML
@@ -22,13 +23,13 @@ public class AdminController {
     @FXML
     ListView<User> userList;
     private Stage primaryStage;
-    private UserList user;
+    private UserList list;
 
     public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
-        user = UserList.getInstance();
-        userList.setItems(user.getUserList());
-        if (user.getUserList().size() > 0)
+        list = UserList.getInstance();
+        userList.setItems(list.getUserList());
+        if (list.getUserList().size() > 0)
             userList.getSelectionModel().select(0);
     }
 
@@ -42,15 +43,21 @@ public class AdminController {
         dialog.setContentText("Username:");
 
         Optional<String> result = dialog.showAndWait();
-        if (result.isPresent() && !user.addUser(result.get().toLowerCase()))
+        if (result.isPresent() && !list.addUser(result.get().trim().toLowerCase())) {
             GeneralMethods.popAlert("Invalid or duplicate name.");
+            return;
+        }
+        UserList.writeApp();
     }
 
     public void delete(ActionEvent e) {
         User user = userList.getSelectionModel().getSelectedItem();
         if (user == null || !GeneralMethods.popConfirm("Delete this user?"))
             return;
-        if (!this.user.deleteUser(user))
+        if (!this.list.deleteUser(user)) {
             GeneralMethods.popAlert("Cannot delete.");
+            return;
+        }
+        UserList.writeApp();
     }
 }

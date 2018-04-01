@@ -1,6 +1,7 @@
 package controller;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -26,8 +27,9 @@ import model.Album;
 import model.Photo;
 import model.Tag;
 import model.User;
+import model.UserList;
 
-public class SearchController {
+public class SearchController implements Serializable {
     @FXML
     Button logoutButton;
     @FXML
@@ -97,14 +99,15 @@ public class SearchController {
         Optional<String> result = dialog.showAndWait();
         if (!result.isPresent())
             return;
-        Album album = user.addAlbum(result.get().toLowerCase());
+        Album album = user.addAlbum(result.get().trim().toLowerCase());
         if (album == null) {
             GeneralMethods.popAlert("Invalid or duplicate name.");
             return;
         }
         for (Photo photo : results)
-            album.getPhotoList().add(photo);
+            album.addPhoto(photo);
         GeneralMethods.popInfo("Created " + album.getName() + " with " + results.size() + " photos.");
+        UserList.writeApp();
     }
 
     public void search(ActionEvent e) {

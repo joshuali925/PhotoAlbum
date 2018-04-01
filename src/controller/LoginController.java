@@ -1,6 +1,7 @@
 package controller;
 
 import java.io.IOException;
+import java.io.Serializable;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -13,7 +14,7 @@ import javafx.stage.Stage;
 import model.User;
 import model.UserList;
 
-public class LoginController {
+public class LoginController implements Serializable {
     @FXML
     TextField username;
     @FXML
@@ -37,7 +38,7 @@ public class LoginController {
             primaryStage.setScene(new Scene(adminPane, 450, 300));
             return;
         }
-        User user = userList.findUser(username.getText().toLowerCase());
+        User user = userList.findUser(username.getText().trim().toLowerCase());
         if (user == null) {
             GeneralMethods.popAlert("User does not exist.");
             return;

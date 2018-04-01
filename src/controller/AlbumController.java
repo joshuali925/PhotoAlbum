@@ -1,6 +1,7 @@
 package controller;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.Optional;
 
 import javafx.beans.property.SimpleStringProperty;
@@ -18,8 +19,9 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import model.Album;
 import model.User;
+import model.UserList;
 
-public class AlbumController {
+public class AlbumController implements Serializable {
     @FXML
     TableView<Album> albumTable;
     @FXML
@@ -68,8 +70,11 @@ public class AlbumController {
         dialog.setContentText("Album name:");
 
         Optional<String> result = dialog.showAndWait();
-        if (result.isPresent() && user.addAlbum(result.get().trim().toLowerCase()) == null)
+        if (result.isPresent() && user.addAlbum(result.get().trim().toLowerCase()) == null) {
             GeneralMethods.popAlert("Invalid or duplicate name.");
+            return;
+        }
+        UserList.writeApp();
     }
 
     public void rename(ActionEvent e) {
@@ -83,16 +88,21 @@ public class AlbumController {
         Optional<String> result = dialog.showAndWait();
         if (result.isPresent() && !user.renameAlbum(album, result.get().toLowerCase())) {
             GeneralMethods.popAlert("Invalid or duplicate name.");
+            return;
         }
         albumTable.refresh();
+        UserList.writeApp();
     }
 
     public void delete(ActionEvent e) {
         Album album = albumTable.getSelectionModel().getSelectedItem();
         if (album == null || !GeneralMethods.popConfirm("Delete this album?"))
             return;
-        if (!user.deleteAlbum(album))
+        if (!user.deleteAlbum(album)) {
             GeneralMethods.popAlert("Cannot delete.");
+            return;
+        }
+        UserList.writeApp();
     }
 
     public void select(Album album) {

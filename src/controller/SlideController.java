@@ -2,6 +2,7 @@ package controller;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,8 +26,9 @@ import model.Album;
 import model.Photo;
 import model.Tag;
 import model.User;
+import model.UserList;
 
-public class SlideController {
+public class SlideController implements Serializable {
 
     @FXML
     TableView<Tag> tagTable;
@@ -103,16 +105,22 @@ public class SlideController {
         if (!result.isPresent())
             return;
         String value = result.get().trim();
-        if (!photo.addTag(key, value))
+        if (!photo.addTag(key, value)) {
             GeneralMethods.popAlert("Invalid or duplicate tag.");
+            return;
+        }
+        UserList.writeApp();
     }
 
     public void removeTag(ActionEvent e) {
         Tag tag = tagTable.getSelectionModel().getSelectedItem();
         if (tag == null || !GeneralMethods.popConfirm("Remove this tag?"))
             return;
-        if (!photo.removeTag(tag))
+        if (!photo.removeTag(tag)) {
             GeneralMethods.popAlert("Cannot remove.");
+            return;
+        }
+        UserList.writeApp();
     }
 
     public void back(ActionEvent e) throws IOException {
@@ -133,8 +141,11 @@ public class SlideController {
         if (!result.isPresent() || result.get() == album)
             return;
         Album targetAlbum = result.get();
-        if (!targetAlbum.addPhoto(photo.getPath(), photo.getTimestamp()))
+        if (!targetAlbum.addPhoto(photo.getPath(), photo.getTimestamp())) {
             GeneralMethods.popAlert("Photo already exists in " + targetAlbum.getName() + ".");
+            return;
+        }
+        UserList.writeApp();
     }
 
     public void move(ActionEvent e) throws IOException {
@@ -166,6 +177,7 @@ public class SlideController {
         SlideController slideController = slideLoader.getController();
         slideController.start(primaryStage, album, newPhoto);
         primaryStage.setScene(new Scene(slidePane, 450, 300));
+        UserList.writeApp();
     }
 
     public void prev(ActionEvent e) throws IOException {

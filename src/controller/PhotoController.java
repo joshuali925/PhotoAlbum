@@ -3,6 +3,7 @@ package controller;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,8 +21,9 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import model.Album;
 import model.Photo;
+import model.UserList;
 
-public class PhotoController {
+public class PhotoController implements Serializable{
     @FXML
     Button logoutButton;
     @FXML
@@ -45,7 +47,7 @@ public class PhotoController {
         this.primaryStage = primaryStage;
         this.album = album;
         title.setText("Photos in " + album);
-        
+
         photoList.setItems(album.getPhotoList());
         photoList.setCellFactory(cell -> new ListCell<Photo>() {
             @Override
@@ -86,6 +88,7 @@ public class PhotoController {
             if (file != null && album.addPhoto(file.getAbsolutePath(), file.lastModified()))
                 counter++;
         GeneralMethods.popInfo("Imported " + counter + " photo" + (counter > 1 ? "s." : "."));
+        UserList.writeApp();
     }
 
     public void recaption(ActionEvent e) {
@@ -100,14 +103,18 @@ public class PhotoController {
             return;
         photo.setCaption((result.get().toLowerCase()));
         photoList.refresh();
+        UserList.writeApp();
     }
 
     public void delete(ActionEvent e) {
         Photo photo = photoList.getSelectionModel().getSelectedItem();
         if (photo == null || !GeneralMethods.popConfirm("Delete this photo?"))
             return;
-        if (!album.deletePhoto(photo))
+        if (!album.deletePhoto(photo)) {
             GeneralMethods.popAlert("Cannot delete.");
+            return;
+        }
+        UserList.writeApp();
     }
 
     public void back(ActionEvent e) throws IOException {
@@ -133,5 +140,5 @@ public class PhotoController {
         slideController.start(primaryStage, album, photo);
         primaryStage.setScene(new Scene(slidePane, 450, 300));
     }
-    
+
 }

@@ -1,6 +1,7 @@
 package controller;
 
 import java.io.IOException;
+import java.io.Serializable;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -10,7 +11,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
-public class GeneralMethods {
+public class GeneralMethods implements Serializable {
     public void logout(Stage primaryStage) throws IOException {
         FXMLLoader loginLoader = new FXMLLoader(getClass().getResource("/view/Login.fxml"));
         Pane loginPane = loginLoader.load();

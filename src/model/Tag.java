@@ -1,8 +1,10 @@
 package model;
 
-public class Tag {
-    public String key;
-    public String value;
+import java.io.Serializable;
+
+public class Tag implements Serializable {
+    private String key;
+    private String value;
 
     public Tag(String key, String value) {
         this.key = key;
@@ -16,7 +18,7 @@ public class Tag {
     public String getValue() {
         return value;
     }
-    
+
     public boolean equals(Tag tag) {
         return key.equals(tag.getKey()) && value.equals(tag.getValue());
     }

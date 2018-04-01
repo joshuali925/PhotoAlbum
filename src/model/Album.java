@@ -1,18 +1,19 @@
 package model;
 
-import java.io.FileNotFoundException;
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Set;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
-public class Album {
-    public String name;
-    public User user;
-    public ObservableList<Photo> photoList = FXCollections.observableArrayList();
-    public Set<String> existingPaths = new HashSet<String>();
+public class Album implements Serializable {
+    private String name;
+    private User user;
+    private transient ObservableList<Photo> photoList = null;
+    private ArrayList<Photo> photoListData = new ArrayList<Photo>();
+    private HashSet<String> existingPaths = new HashSet<String>();
 
     public Album(String name) {
         this.name = name;
@@ -35,10 +36,10 @@ public class Album {
     }
 
     public String getRange() {
-        if (photoList.size() == 0)
+        if (photoListData.size() == 0)
             return "";
         long min = Long.MAX_VALUE, max = Long.MIN_VALUE;
-        for (Photo photo : photoList) {
+        for (Photo photo : photoListData) {
             long curr = photo.getTimestamp();
             if (curr > max)
                 max = curr;
@@ -50,21 +51,34 @@ public class Album {
     }
 
     public String getPhotoNumber() {
-        return photoList.size() + "";
+        return photoListData.size() + "";
     }
 
     public ObservableList<Photo> getPhotoList() {
+        if (photoList == null)
+            photoList = FXCollections.observableArrayList(photoListData);
         return photoList;
     }
 
-    public boolean addPhoto(String path, long date) throws FileNotFoundException {
-        return existingPaths.add(path) && photoList.add(new Photo(path, date));
+    public boolean addPhoto(String path, long date)  {
+        if (photoList == null)
+            photoList = FXCollections.observableArrayList(photoListData);
+        Photo photo = new Photo(path, date);
+        return existingPaths.add(path) && photoList.add(photo) && photoListData.add(photo);
+    }
+    
+    public boolean addPhoto(Photo photo) {
+        if (photoList == null)
+            photoList = FXCollections.observableArrayList(photoListData);
+        return existingPaths.add(photo.getPath()) && photoList.add(photo) && photoListData.add(photo);
     }
 
     public boolean deletePhoto(Photo photo) {
-        return existingPaths.remove(photo.getPath()) && photoList.remove(photo);
+        if (photoList == null)
+            photoList = FXCollections.observableArrayList(photoListData);
+        return existingPaths.remove(photo.getPath()) && photoList.remove(photo) && photoListData.remove(photo);
     }
-
+    
     @Override
     public String toString() {
         return name;

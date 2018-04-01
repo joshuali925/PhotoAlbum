@@ -16,6 +16,10 @@ public class Tag {
     public String getValue() {
         return value;
     }
+    
+    public boolean equals(Tag tag) {
+        return key.equals(tag.getKey()) && value.equals(tag.getValue());
+    }
 
     @Override
     public String toString() {

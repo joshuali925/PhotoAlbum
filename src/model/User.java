@@ -24,14 +24,14 @@ public class User {
         return null;
     }
 
-    public boolean addAlbum(String name) {
+    public Album addAlbum(String name) {
         if (name.length() == 0 || findAlbum(name) != null)
-            return false;
+            return null;
         Album album = new Album(name);
 
         // TODO: only for testing
         try {
-            album.addPhoto("D:/Photos/Lightroom/b1.jpg", 10241253);
+            album.addPhoto("D:/Photos/Lightroom/b1.jpg", 1522641600000L);
             album.addPhoto("D:/Photos/Lightroom/b2.jpg", 102412532);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -39,7 +39,7 @@ public class User {
 
         album.setUser(this);
         albumList.add(album);
-        return true;
+        return album;
     }
 
     public boolean deleteAlbum(Album album) {

@@ -95,12 +95,15 @@ public class SlideController {
         Optional<String> result = dialog.showAndWait();
         if (!result.isPresent())
             return;
-        String key = result.get();
+        String key = result.get().trim();
         dialog = new TextInputDialog();
         dialog.setHeaderText(null);
         dialog.setContentText("Tag value:");
         result = dialog.showAndWait();
-        if (result.isPresent() && !photo.addTag(key, result.get()))
+        if (!result.isPresent())
+            return;
+        String value = result.get().trim();
+        if (!photo.addTag(key, value))
             GeneralMethods.popAlert("Invalid or duplicate tag.");
     }
 

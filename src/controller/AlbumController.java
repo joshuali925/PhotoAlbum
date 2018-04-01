@@ -39,6 +39,8 @@ public class AlbumController {
     @FXML
     Button logoutButton;
     @FXML
+    Button searchButton;
+    @FXML
     Label title;
     private Stage primaryStage;
     private User user;
@@ -46,7 +48,7 @@ public class AlbumController {
     public void start(Stage primaryStage, User user) {
         this.primaryStage = primaryStage;
         this.user = user;
-        title.setText(user+"'s album");
+        title.setText(user + "'s album");
         ObservableList<Album> albumList = user.getAlbumList();
         nameCol.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getName()));
         photosCol.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getPhotoNumber()));
@@ -66,7 +68,7 @@ public class AlbumController {
         dialog.setContentText("Album name:");
 
         Optional<String> result = dialog.showAndWait();
-        if (result.isPresent() && !user.addAlbum(result.get().toLowerCase()))
+        if (result.isPresent() && user.addAlbum(result.get().trim().toLowerCase()) == null)
             GeneralMethods.popAlert("Invalid or duplicate name.");
     }
 
@@ -102,9 +104,17 @@ public class AlbumController {
         if (album == null)
             return;
         FXMLLoader photoLoader = new FXMLLoader(getClass().getResource("/view/Photo.fxml"));
-        Pane albumPane = photoLoader.load();
+        Pane photoPane = photoLoader.load();
         PhotoController photoController = photoLoader.getController();
         photoController.start(primaryStage, album);
-        primaryStage.setScene(new Scene(albumPane, 450, 300));
+        primaryStage.setScene(new Scene(photoPane, 450, 300));
+    }
+
+    public void search(ActionEvent e) throws IOException {
+        FXMLLoader searchLoader = new FXMLLoader(getClass().getResource("/view/Search.fxml"));
+        Pane searchPane = searchLoader.load();
+        SearchController searchController = searchLoader.getController();
+        searchController.start(primaryStage, user);
+        primaryStage.setScene(new Scene(searchPane, 450, 300));
     }
 }

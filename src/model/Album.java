@@ -45,7 +45,7 @@ public class Album {
             if (curr < min)
                 min = curr;
         }
-        SimpleDateFormat dateFormatter = new SimpleDateFormat("M/dd/yyyy");
+        SimpleDateFormat dateFormatter = new SimpleDateFormat("M/d/yyyy");
         return dateFormatter.format(min) + " - " + dateFormatter.format(max);
     }
 

@@ -44,9 +44,9 @@ public class PhotoController {
     public void start(Stage primaryStage, Album album) {
         this.primaryStage = primaryStage;
         this.album = album;
-        photoList.setItems(album.getPhotoList());
         title.setText("Photos in " + album);
-
+        
+        photoList.setItems(album.getPhotoList());
         photoList.setCellFactory(cell -> new ListCell<Photo>() {
             @Override
             public void updateItem(Photo name, boolean empty) {
@@ -133,5 +133,5 @@ public class PhotoController {
         slideController.start(primaryStage, album, photo);
         primaryStage.setScene(new Scene(slidePane, 450, 300));
     }
-
+    
 }

@@ -17,7 +17,7 @@ public class Photo {
     public long date;
     public Image image;
     public ImageView thumbnail;
-    public SimpleDateFormat dateFormatter = new SimpleDateFormat("M/dd/yyyy HH:mm:ss");
+    public SimpleDateFormat dateFormatter = new SimpleDateFormat("M/d/yyyy HH:mm:ss");
 
     public Photo(String path, long date) throws FileNotFoundException {
         int index = Math.max(path.lastIndexOf("\\"), path.lastIndexOf("/")) + 1;

@@ -1,7 +1,6 @@
 package controller;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.Optional;
 
 import javafx.beans.property.SimpleStringProperty;
@@ -21,7 +20,11 @@ import model.Album;
 import model.User;
 import model.UserList;
 
-public class AlbumController implements Serializable {
+/**
+ * @author Joshua Li, Dingbang Chen
+ *
+ */
+public class AlbumController {
     @FXML
     TableView<Album> albumTable;
     @FXML
@@ -47,6 +50,12 @@ public class AlbumController implements Serializable {
     private Stage primaryStage;
     private User user;
 
+    /**
+     * Initialize
+     * 
+     * @param primaryStage
+     * @param user
+     */
     public void start(Stage primaryStage, User user) {
         this.primaryStage = primaryStage;
         this.user = user;
@@ -60,33 +69,53 @@ public class AlbumController implements Serializable {
             albumTable.getSelectionModel().select(0);
     }
 
+    /**
+     * Logout
+     * 
+     * @param e
+     * @throws IOException
+     */
     public void logout(ActionEvent e) throws IOException {
-        new GeneralMethods().logout(primaryStage);
+        GeneralMethods.logout();
     }
 
+    /**
+     * Add album
+     * 
+     * @param e
+     */
     public void create(ActionEvent e) {
         TextInputDialog dialog = new TextInputDialog();
+        dialog.initOwner(primaryStage);
         dialog.setHeaderText(null);
         dialog.setContentText("Album name:");
 
         Optional<String> result = dialog.showAndWait();
-        if (result.isPresent() && user.addAlbum(result.get().trim().toLowerCase()) == null) {
+        if (!result.isPresent())
+            return;
+        if (user.addAlbum(result.get().trim()) == null) {
             GeneralMethods.popAlert("Invalid or duplicate name.");
             return;
         }
         UserList.writeApp();
     }
 
+    /**
+     * Rename album
+     * 
+     * @param e
+     */
     public void rename(ActionEvent e) {
         Album album = albumTable.getSelectionModel().getSelectedItem();
         if (album == null)
             return;
         TextInputDialog dialog = new TextInputDialog(album.getName());
+        dialog.initOwner(primaryStage);
         dialog.setHeaderText(null);
         dialog.setContentText("New name:");
 
         Optional<String> result = dialog.showAndWait();
-        if (result.isPresent() && !user.renameAlbum(album, result.get().toLowerCase())) {
+        if (result.isPresent() && !user.renameAlbum(album, result.get())) {
             GeneralMethods.popAlert("Invalid or duplicate name.");
             return;
         }
@@ -94,6 +123,11 @@ public class AlbumController implements Serializable {
         UserList.writeApp();
     }
 
+    /**
+     * Delete album
+     * 
+     * @param e
+     */
     public void delete(ActionEvent e) {
         Album album = albumTable.getSelectionModel().getSelectedItem();
         if (album == null || !GeneralMethods.popConfirm("Delete this album?"))
@@ -105,10 +139,21 @@ public class AlbumController implements Serializable {
         UserList.writeApp();
     }
 
+    /**
+     * Select current album
+     * 
+     * @param album
+     */
     public void select(Album album) {
         albumTable.getSelectionModel().select(album);
     }
 
+    /**
+     * Open album
+     * 
+     * @param e
+     * @throws IOException
+     */
     public void open(ActionEvent e) throws IOException {
         Album album = albumTable.getSelectionModel().getSelectedItem();
         if (album == null)
@@ -120,6 +165,12 @@ public class AlbumController implements Serializable {
         primaryStage.setScene(new Scene(photoPane, 450, 300));
     }
 
+    /**
+     * Open search
+     * 
+     * @param e
+     * @throws IOException
+     */
     public void search(ActionEvent e) throws IOException {
         FXMLLoader searchLoader = new FXMLLoader(getClass().getResource("/view/Search.fxml"));
         Pane searchPane = searchLoader.load();

@@ -15,6 +15,25 @@
 	<children>
 		<Button fx:id="backButton" layoutX="176.0" layoutY="28.0"
 			mnemonicParsing="false" onAction="#back" text="Back" />
+		<Button fx:id="copyButton" layoutX="219.0" layoutY="28.0"
+			mnemonicParsing="false" onAction="#copy" text="Copy to Album" />
+		<Button fx:id="moveButton" layoutX="317.0" layoutY="28.0"
+			mnemonicParsing="false" onAction="#move" text="Move to Album" />
+		<Button fx:id="prevButton" layoutX="217.0" layoutY="249.0"
+			mnemonicParsing="false" onAction="#prev" text="Prev" />
+		<Button fx:id="nextButton" layoutX="336.0" layoutY="249.0"
+			mnemonicParsing="false" onAction="#next" text="Next" />
+		<Button fx:id="addButton" layoutX="9.0" layoutY="3.0"
+			mnemonicParsing="false" onAction="#addTag" prefHeight="25.0"
+			prefWidth="59.0" text="Add" />
+		<Button fx:id="removeButton" layoutX="90.0" layoutY="3.0"
+			mnemonicParsing="false" onAction="#removeTag" text="Remove" />
+		<Label fx:id="nameLabel" layoutX="176.0" layoutY="3.0"
+			prefHeight="25.0" prefWidth="161.0" text="Name" />
+		<Label fx:id="dateLabel" layoutX="335.0" layoutY="7.0"
+			prefHeight="17.0" prefWidth="110.0" text="Date" />
+		<Label fx:id="captionLabel" layoutX="177.0" layoutY="224.0"
+			text="Caption:" />
 		<ImageView fx:id="imageView" fitHeight="161.0"
 			fitWidth="262.0" layoutX="169.0" layoutY="60.0" pickOnBounds="true"
 			preserveRatio="true" />
@@ -27,24 +46,5 @@
 					text="Value" />
 			</columns>
 		</TableView>
-		<Button fx:id="addButton" layoutX="9.0" layoutY="3.0"
-			mnemonicParsing="false" onAction="#addTag" prefHeight="25.0"
-			prefWidth="59.0" text="Add" />
-		<Button fx:id="removeButton" layoutX="90.0" layoutY="3.0"
-			mnemonicParsing="false" onAction="#removeTag" text="Remove" />
-		<Label fx:id="nameLabel" layoutX="176.0" layoutY="3.0"
-			prefHeight="25.0" prefWidth="161.0" text="Name" />
-		<Label fx:id="dateLabel" layoutX="335.0" layoutY="7.0"
-			prefHeight="17.0" prefWidth="110.0" text="Date" />
-		<Label fx:id="captionLabel" layoutX="177.0" layoutY="224.0"
-			text="Caption:" />
-		<Button fx:id="copyButton" layoutX="219.0" layoutY="28.0"
-			mnemonicParsing="false" onAction="#copy" text="Copy to Album" />
-		<Button fx:id="moveButton" layoutX="317.0" layoutY="28.0"
-			mnemonicParsing="false" onAction="#move" text="Move to Album" />
-		<Button fx:id="prevButton" layoutX="217.0" layoutY="249.0"
-			mnemonicParsing="false" onAction="#prev" text="Prev" />
-		<Button fx:id="nextButton" layoutX="336.0" layoutY="249.0"
-			mnemonicParsing="false" onAction="#next" text="Next" />
 	</children>
 </AnchorPane>

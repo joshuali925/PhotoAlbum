@@ -3,7 +3,6 @@ package controller;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,7 +22,11 @@ import model.Album;
 import model.Photo;
 import model.UserList;
 
-public class PhotoController implements Serializable{
+/**
+ * @author Joshua Li, Dingbang Chen
+ *
+ */
+public class PhotoController {
     @FXML
     Button logoutButton;
     @FXML
@@ -43,6 +46,12 @@ public class PhotoController implements Serializable{
     private Stage primaryStage;
     private Album album;
 
+    /**
+     * Initialize
+     * 
+     * @param primaryStage
+     * @param album
+     */
     public void start(Stage primaryStage, Album album) {
         this.primaryStage = primaryStage;
         this.album = album;
@@ -70,42 +79,73 @@ public class PhotoController implements Serializable{
             photoList.getSelectionModel().select(0);
     }
 
+    /**
+     * Logout
+     * 
+     * @param e
+     * @throws IOException
+     */
     public void logout(ActionEvent e) throws IOException {
-        new GeneralMethods().logout(primaryStage);
+        GeneralMethods.logout();
     }
 
+    /**
+     * Try add photo
+     * 
+     * @param e
+     * @throws FileNotFoundException
+     */
     public void add(ActionEvent e) throws FileNotFoundException {
         FileChooser chooser = new FileChooser();
         List<File> files = chooser.showOpenMultipleDialog(primaryStage);
         if (files == null)
             return;
-        if (files.size() > 10) {
-            GeneralMethods.popAlert("Please choose less than 10 photos at once.");
-            return;
-        }
+        // if (files.size() > 100) {
+        // GeneralMethods.popAlert("Please choose less than 100 photos at once.");
+        // return;
+        // }
         int counter = 0;
         for (File file : files)
             if (file != null && album.addPhoto(file.getAbsolutePath(), file.lastModified()))
                 counter++;
-        GeneralMethods.popInfo("Imported " + counter + " photo" + (counter > 1 ? "s." : "."));
-        UserList.writeApp();
+        String response = "Imported " + counter + " photo" + (counter > 1 ? "s." : ".");
+        if (files.size() - counter > 0)
+            response += "\n" + (files.size() - counter) + " already in " + album + ".";
+        GeneralMethods.popInfo(response);
+        if (counter > 0)
+            UserList.writeApp();
     }
 
+    /**
+     * Add caption or recaption
+     * 
+     * @param e
+     */
     public void recaption(ActionEvent e) {
         Photo photo = photoList.getSelectionModel().getSelectedItem();
         if (photo == null)
             return;
-        TextInputDialog dialog = new TextInputDialog();
+        String caption = photo.getCaption();
+        TextInputDialog dialog = new TextInputDialog(caption);
+        dialog.initOwner(primaryStage);
         dialog.setHeaderText(null);
         dialog.setContentText("Caption:");
         Optional<String> result = dialog.showAndWait();
-        if (!result.isPresent())
+        if (!result.isPresent() || result.get().equals(caption))
             return;
-        photo.setCaption((result.get().toLowerCase()));
+        photo.setCaption((result.get()));
+        // photoList.setItems(null);
+        // photoList.setItems(album.getPhotoList());
+        // photoList.getSelectionModel().select(photo);
         photoList.refresh();
         UserList.writeApp();
     }
 
+    /**
+     * Delete photo
+     * 
+     * @param e
+     */
     public void delete(ActionEvent e) {
         Photo photo = photoList.getSelectionModel().getSelectedItem();
         if (photo == null || !GeneralMethods.popConfirm("Delete this photo?"))
@@ -117,6 +157,12 @@ public class PhotoController implements Serializable{
         UserList.writeApp();
     }
 
+    /**
+     * Go back to albums
+     * 
+     * @param e
+     * @throws IOException
+     */
     public void back(ActionEvent e) throws IOException {
         FXMLLoader albumLoader = new FXMLLoader(getClass().getResource("/view/Album.fxml"));
         Pane albumPane = albumLoader.load();
@@ -126,10 +172,21 @@ public class PhotoController implements Serializable{
         albumController.select(album);
     }
 
+    /**
+     * Select current photo
+     * 
+     * @param photo
+     */
     public void select(Photo photo) {
         photoList.getSelectionModel().select(photo);
     }
 
+    /**
+     * Display photo
+     * 
+     * @param e
+     * @throws IOException
+     */
     public void open(ActionEvent e) throws IOException {
         Photo photo = photoList.getSelectionModel().getSelectedItem();
         if (photo == null)

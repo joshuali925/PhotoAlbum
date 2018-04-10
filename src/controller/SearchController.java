@@ -1,7 +1,6 @@
 package controller;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -29,7 +28,11 @@ import model.Tag;
 import model.User;
 import model.UserList;
 
-public class SearchController implements Serializable {
+/**
+ * @author Joshua Li, Dingbang Chen
+ *
+ */
+public class SearchController {
     @FXML
     Button logoutButton;
     @FXML
@@ -47,6 +50,8 @@ public class SearchController implements Serializable {
     @FXML
     CheckBox tagCheckBox;
     @FXML
+    CheckBox tagMatchAllCheckBox;
+    @FXML
     TextArea tagText;
     @FXML
     ListView<Photo> resultList;
@@ -55,6 +60,12 @@ public class SearchController implements Serializable {
     private User user;
     private ObservableList<Photo> results = FXCollections.observableArrayList();
 
+    /**
+     * Initialize
+     * 
+     * @param primaryStage
+     * @param user
+     */
     public void start(Stage primaryStage, User user) {
         this.primaryStage = primaryStage;
         this.user = user;
@@ -79,10 +90,22 @@ public class SearchController implements Serializable {
         });
     }
 
+    /**
+     * Logout
+     * 
+     * @param e
+     * @throws IOException
+     */
     public void logout(ActionEvent e) throws IOException {
-        new GeneralMethods().logout(primaryStage);
+        GeneralMethods.logout();
     }
 
+    /**
+     * Go back to album list
+     * 
+     * @param e
+     * @throws IOException
+     */
     public void back(ActionEvent e) throws IOException {
         FXMLLoader albumLoader = new FXMLLoader(getClass().getResource("/view/Album.fxml"));
         Pane albumPane = albumLoader.load();
@@ -91,8 +114,14 @@ public class SearchController implements Serializable {
         primaryStage.setScene(new Scene(albumPane, 450, 300));
     }
 
+    /**
+     * Add new album with search results
+     * 
+     * @param e
+     */
     public void createAlbum(ActionEvent e) {
         TextInputDialog dialog = new TextInputDialog();
+        dialog.initOwner(primaryStage);
         dialog.setHeaderText(null);
         dialog.setContentText("Album name:");
 
@@ -110,14 +139,18 @@ public class SearchController implements Serializable {
         UserList.writeApp();
     }
 
+    /**
+     * Search with given conditions
+     * 
+     * @param e
+     */
     public void search(ActionEvent e) {
         results.clear();
         LocalDate fld = fromDatePicker.getValue();
         LocalDate tld = toDatePicker.getValue();
         long fromDate = -1, toDate = -1;
-        boolean searchDate = false, searchTags = false;
-        if (fld != null && tld != null) {
-            searchDate = true;
+        boolean searchDate = false, searchTags = false, matchAll = tagMatchAllCheckBox.isSelected();
+        if (dateCheckBox.isSelected() && fld != null && tld != null) {
             Calendar cal = Calendar.getInstance();
             cal.set(Calendar.HOUR_OF_DAY, 0);
             cal.set(Calendar.MINUTE, 0);
@@ -132,20 +165,23 @@ public class SearchController implements Serializable {
             cal.set(Calendar.DAY_OF_MONTH, tld.getDayOfMonth());
             cal.set(Calendar.YEAR, tld.getYear());
             toDate = cal.getTimeInMillis() + 86400000 - 1;
+            if (fromDate <= toDate)
+                searchDate = true;
         }
 
-        String[] tags = tagText.getText().split("\n");
-        List<Tag> patterns = new ArrayList<Tag>();
-        for (String tag : tags) {
-            String[] keyVal = tag.split("=");
-            if (keyVal.length != 2)
-                continue;
-            Tag pattern = new Tag(keyVal[0].trim(), keyVal[1].trim());
-            patterns.add(pattern);
+        List<Tag> patterns = null;
+        if (tagCheckBox.isSelected()) {
+            String[] tags = tagText.getText().split("\n");
+            patterns = new ArrayList<Tag>();
+            for (String tag : tags) {
+                String[] keyVal = tag.split("=");
+                if (keyVal.length != 2)
+                    continue;
+                Tag pattern = new Tag(keyVal[0].trim(), keyVal[1].trim());
+                patterns.add(pattern);
+            }
+            searchTags = patterns.size() > 0;
         }
-
-        searchDate = searchDate && dateCheckBox.isSelected();
-        searchTags = patterns.size() > 0 && tagCheckBox.isSelected();
 
         if (!searchDate && !searchTags)
             return;
@@ -163,14 +199,36 @@ public class SearchController implements Serializable {
                     }
                 }
                 if (!added && searchTags) {
-                    for (Tag photoTags : photo.getTags()) {
-                        if (added)
-                            break;
-                        for (Tag t : patterns) {
-                            if (photoTags.equals(t)) {
-                                results.add(photo);
-                                added = true;
+                    if (matchAll) {
+                        for (Tag pattern : patterns) {
+                            boolean add = false;
+                            for (Tag photoTags : photo.getTags()) {
+                                if (photoTags.equals(pattern)) {
+                                    add = true;
+                                    break;
+                                }
+                            }
+                            if (!add) {
+                                added = true; // not really added, just so it won't add
                                 break;
+                            }
+                        }
+                        if (!added) {
+                            results.add(photo);
+                            added = true;
+                        } else {
+                            added = false;
+                        }
+                    } else {
+                        for (Tag photoTags : photo.getTags()) {
+                            if (added)
+                                break;
+                            for (Tag pattern : patterns) {
+                                if (photoTags.equals(pattern)) {
+                                    results.add(photo);
+                                    added = true;
+                                    break;
+                                }
                             }
                         }
                     }

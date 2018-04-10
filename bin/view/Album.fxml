@@ -7,25 +7,40 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="450.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.AlbumController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity"
+	minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0"
+	prefWidth="450.0" xmlns="http://javafx.com/javafx/8.0.141"
+	xmlns:fx="http://javafx.com/fxml/1"
+	fx:controller="controller.AlbumController">
 	<children>
-		<Button fx:id="openButton" layoutX="121.0" layoutY="258.0" mnemonicParsing="false" onAction="#open" text="Open" />
+		<Button fx:id="openButton" layoutX="121.0" layoutY="258.0"
+			mnemonicParsing="false" onAction="#open" text="Open" />
+		<Button fx:id="createButton" layoutX="185.0" layoutY="258.0"
+			mnemonicParsing="false" onAction="#create" text="Create" />
+		<Button fx:id="renameButton" layoutX="257.0" layoutY="258.0"
+			mnemonicParsing="false" onAction="#rename" text="Rename" />
+		<Button fx:id="deleteButton" layoutX="335.0" layoutY="258.0"
+			mnemonicParsing="false" onAction="#delete" text="Delete" />
+		<Button fx:id="searchButton" layoutX="375.0" layoutY="64.0"
+			mnemonicParsing="false" onAction="#search" prefHeight="25.0"
+			prefWidth="54.0" text="Search" />
+		<Button fx:id="logoutButton" layoutX="375.0" layoutY="24.0"
+			mnemonicParsing="false" onAction="#logout" text="Logout" />
+		<TableView fx:id="albumTable" layoutX="22.0" layoutY="43.0"
+			prefHeight="200.0" prefWidth="325.0">
+			<columns>
+				<TableColumn fx:id="nameCol" prefWidth="100.0"
+					text="Name" />
+				<TableColumn fx:id="photosCol" prefWidth="75.0"
+					text="Photos" />
+				<TableColumn fx:id="dateCol" prefWidth="148.0"
+					text="Date Range" />
+			</columns>
+		</TableView>
 		<Label fx:id="title" layoutX="121.0" layoutY="8.0" text="Album">
 			<font>
 				<Font size="22.0" />
 			</font>
 		</Label>
-		<Button fx:id="createButton" layoutX="185.0" layoutY="258.0" mnemonicParsing="false" onAction="#create" text="Create" />
-		<Button fx:id="deleteButton" layoutX="335.0" layoutY="258.0" mnemonicParsing="false" onAction="#delete" text="Delete" />
-		<Button fx:id="renameButton" layoutX="257.0" layoutY="258.0" mnemonicParsing="false" onAction="#rename" text="Rename" />
-		<Button fx:id="logoutButton" layoutX="375.0" layoutY="24.0" mnemonicParsing="false" onAction="#logout" text="Logout" />
-      <Button fx:id="searchButton" layoutX="375.0" layoutY="64.0" mnemonicParsing="false" onAction="#search" prefHeight="25.0" prefWidth="54.0" text="Search" />
-		<TableView fx:id="albumTable" layoutX="22.0" layoutY="43.0" prefHeight="200.0" prefWidth="325.0">
-			<columns>
-				<TableColumn fx:id="nameCol" prefWidth="100.0" text="Name" />
-				<TableColumn fx:id="photosCol" prefWidth="75.0" text="Photos" />
-				<TableColumn fx:id="dateCol" prefWidth="148.0" text="Date Range" />
-			</columns>
-		</TableView>
 	</children>
 </AnchorPane>

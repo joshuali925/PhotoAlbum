@@ -2,7 +2,6 @@ package controller;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,7 +27,11 @@ import model.Tag;
 import model.User;
 import model.UserList;
 
-public class SlideController implements Serializable {
+/**
+ * @author Joshua Li, Dingbang Chen
+ *
+ */
+public class SlideController {
 
     @FXML
     TableView<Tag> tagTable;
@@ -63,22 +66,26 @@ public class SlideController implements Serializable {
     private Album album;
     private User user;
 
+    /**
+     * Initialize
+     * 
+     * @param primaryStage
+     * @param album
+     * @param photo
+     */
     public void start(Stage primaryStage, Album album, Photo photo) {
         this.primaryStage = primaryStage;
+        this.photo = photo;
         this.album = album;
         this.user = album.getUser();
-        this.photo = photo;
-        imageView.setImage(photo.getImage());
-        centerImage();
-
-        nameLabel.setText(photo.getName());
-        dateLabel.setText(photo.getDate());
-        captionLabel.setText(photo.getCaption());
-        tagTable.setItems(photo.getTags());
+        updateInfo(photo);
         keyCol.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getKey()));
         valueCol.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getValue()));
     }
 
+    /**
+     * Move the image to center
+     */
     public void centerImage() {
         Image image = imageView.getImage();
         if (image == null)
@@ -90,8 +97,14 @@ public class SlideController implements Serializable {
         imageView.setY((imageView.getFitHeight() - image.getHeight() * adjust) / 2);
     }
 
+    /**
+     * Add a new tag
+     * 
+     * @param e
+     */
     public void addTag(ActionEvent e) {
         TextInputDialog dialog = new TextInputDialog();
+        dialog.initOwner(primaryStage);
         dialog.setHeaderText(null);
         dialog.setContentText("Tag key:");
         Optional<String> result = dialog.showAndWait();
@@ -99,6 +112,7 @@ public class SlideController implements Serializable {
             return;
         String key = result.get().trim();
         dialog = new TextInputDialog();
+        dialog.initOwner(primaryStage);
         dialog.setHeaderText(null);
         dialog.setContentText("Tag value:");
         result = dialog.showAndWait();
@@ -112,6 +126,11 @@ public class SlideController implements Serializable {
         UserList.writeApp();
     }
 
+    /**
+     * Remove selected tag
+     * 
+     * @param e
+     */
     public void removeTag(ActionEvent e) {
         Tag tag = tagTable.getSelectionModel().getSelectedItem();
         if (tag == null || !GeneralMethods.popConfirm("Remove this tag?"))
@@ -123,6 +142,12 @@ public class SlideController implements Serializable {
         UserList.writeApp();
     }
 
+    /**
+     * Go back to photos
+     * 
+     * @param e
+     * @throws IOException
+     */
     public void back(ActionEvent e) throws IOException {
         FXMLLoader photoLoader = new FXMLLoader(getClass().getResource("/view/Photo.fxml"));
         Pane albumPane = photoLoader.load();
@@ -132,32 +157,46 @@ public class SlideController implements Serializable {
         photoController.select(photo);
     }
 
+    /**
+     * Copy photo to an album
+     * 
+     * @param e
+     * @throws FileNotFoundException
+     */
     public void copy(ActionEvent e) throws FileNotFoundException {
         List<Album> choices = user.getAlbumList();
         ChoiceDialog<Album> dialog = new ChoiceDialog<Album>(choices.get(0), choices);
+        dialog.initOwner(primaryStage);
         dialog.setHeaderText(null);
         dialog.setContentText("Copy to album:");
         Optional<Album> result = dialog.showAndWait();
         if (!result.isPresent() || result.get() == album)
             return;
         Album targetAlbum = result.get();
-        if (!targetAlbum.addPhoto(photo.getPath(), photo.getTimestamp())) {
+        if (!targetAlbum.addPhoto(photo)) {
             GeneralMethods.popAlert("Photo already exists in " + targetAlbum.getName() + ".");
             return;
         }
         UserList.writeApp();
     }
 
+    /**
+     * Move photo to an album
+     * 
+     * @param e
+     * @throws IOException
+     */
     public void move(ActionEvent e) throws IOException {
         List<Album> choices = user.getAlbumList();
         ChoiceDialog<Album> dialog = new ChoiceDialog<Album>(choices.get(0), choices);
+        dialog.initOwner(primaryStage);
         dialog.setHeaderText(null);
         dialog.setContentText("Move to album:");
         Optional<Album> result = dialog.showAndWait();
         if (!result.isPresent() || result.get() == album)
             return;
         Album targetAlbum = result.get();
-        if (!targetAlbum.addPhoto(photo.getPath(), photo.getTimestamp())) {
+        if (!targetAlbum.addPhoto(photo)) {
             GeneralMethods.popAlert("Photo already exists in " + targetAlbum.getName() + ".");
             return;
         }
@@ -171,15 +210,31 @@ public class SlideController implements Serializable {
         }
         if (index == photoList.size())
             index--;
-        FXMLLoader slideLoader = new FXMLLoader(getClass().getResource("/view/Slide.fxml"));
-        Pane slidePane = slideLoader.load();
-        Photo newPhoto = photoList.get(index);
-        SlideController slideController = slideLoader.getController();
-        slideController.start(primaryStage, album, newPhoto);
-        primaryStage.setScene(new Scene(slidePane, 450, 300));
+        updateInfo(photoList.get(index));
         UserList.writeApp();
     }
 
+    /**
+     * Refresh with new photo
+     * 
+     * @param photo
+     */
+    public void updateInfo(Photo photo) {
+        this.photo = photo;
+        imageView.setImage(photo.getImage());
+        centerImage();
+        nameLabel.setText(photo.getName());
+        dateLabel.setText(photo.getDate());
+        captionLabel.setText(photo.getCaption());
+        tagTable.setItems(photo.getTags());
+    }
+
+    /**
+     * Go to previous photo
+     * 
+     * @param e
+     * @throws IOException
+     */
     public void prev(ActionEvent e) throws IOException {
         ObservableList<Photo> photoList = album.getPhotoList();
         int index = photoList.indexOf(photo) - 1;
@@ -187,14 +242,15 @@ public class SlideController implements Serializable {
             GeneralMethods.popAlert("No more photos.");
             return;
         }
-        FXMLLoader slideLoader = new FXMLLoader(getClass().getResource("/view/Slide.fxml"));
-        Pane slidePane = slideLoader.load();
-        Photo newPhoto = photoList.get(index);
-        SlideController slideController = slideLoader.getController();
-        slideController.start(primaryStage, album, newPhoto);
-        primaryStage.setScene(new Scene(slidePane, 450, 300));
+        updateInfo(photoList.get(index));
     }
 
+    /**
+     * Go to next photo
+     * 
+     * @param e
+     * @throws IOException
+     */
     public void next(ActionEvent e) throws IOException {
         ObservableList<Photo> photoList = album.getPhotoList();
         int index = photoList.indexOf(photo) + 1;
@@ -202,13 +258,7 @@ public class SlideController implements Serializable {
             GeneralMethods.popAlert("No more photos.");
             return;
         }
-        FXMLLoader slideLoader = new FXMLLoader(getClass().getResource("/view/Slide.fxml"));
-        Pane slidePane = slideLoader.load();
-        Photo newPhoto = photoList.get(index);
-        SlideController slideController = slideLoader.getController();
-        slideController.start(primaryStage, album, newPhoto);
-        primaryStage.setScene(new Scene(slidePane, 450, 300));
-
+        updateInfo(photoList.get(index));
     }
 
 }

@@ -1,7 +1,6 @@
 package controller;
 
 import java.io.IOException;
-import java.io.Serializable;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -14,7 +13,11 @@ import javafx.stage.Stage;
 import model.User;
 import model.UserList;
 
-public class LoginController implements Serializable {
+/**
+ * @author Joshua Li, Dingbang Chen
+ *
+ */
+public class LoginController {
     @FXML
     TextField username;
     @FXML
@@ -22,15 +25,27 @@ public class LoginController implements Serializable {
     private Stage primaryStage;
     private UserList userList;
 
+    /**
+     * Initialize
+     * 
+     * @param primaryStage
+     */
     public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
         this.userList = UserList.getInstance();
     }
 
+    /**
+     * Try to login with given username
+     * 
+     * @param e
+     * @throws IOException
+     */
     public void login(ActionEvent e) throws IOException {
         if (username.getText().length() == 0)
             return;
-        if (username.getText().toLowerCase().equals("admin")) {
+        String input = username.getText().trim().toLowerCase();
+        if (input.equals("admin")) {
             FXMLLoader adminLoader = new FXMLLoader(getClass().getResource("/view/Admin.fxml"));
             Pane adminPane = adminLoader.load();
             AdminController adminController = adminLoader.getController();
@@ -38,7 +53,7 @@ public class LoginController implements Serializable {
             primaryStage.setScene(new Scene(adminPane, 450, 300));
             return;
         }
-        User user = userList.findUser(username.getText().trim().toLowerCase());
+        User user = userList.findUser(input);
         if (user == null) {
             GeneralMethods.popAlert("User does not exist.");
             return;

@@ -11,36 +11,37 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="450.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.SearchController">
 	<children>
+		<TextArea fx:id="tagText" layoutX="78.0" layoutY="121.0" prefHeight="105.0" prefWidth="174.0" />
 		<Button fx:id="logoutButton" layoutX="375.0" layoutY="12.0" mnemonicParsing="false" onAction="#logout" text="Logout" />
-		<ListView fx:id="resultList" layoutX="262.0" layoutY="54.0" prefHeight="192.0" prefWidth="167.0" />
 		<Button fx:id="backButton" layoutX="14.0" layoutY="12.0" mnemonicParsing="false" onAction="#back" text="Back" />
-		<Label layoutX="262.0" layoutY="37.0" text="Results" />
+		<Button fx:id="searchButton" layoutX="180.0" layoutY="261.0" mnemonicParsing="false" onAction="#search" text="Search" />
+		<Button fx:id="createAlbumButton" layoutX="312.0" layoutY="261.0" mnemonicParsing="false" onAction="#createAlbum" prefHeight="25.0" prefWidth="94.0" text="Create Album" />
 		<DatePicker fx:id="fromDatePicker" layoutX="78.0" layoutY="55.0" />
-		<DatePicker fx:id="toDatePicker" layoutX="78.0" layoutY="97.0" />
+		<DatePicker fx:id="toDatePicker" layoutX="78.0" layoutY="87.0" />
+		<ListView fx:id="resultList" layoutX="262.0" layoutY="54.0" prefHeight="192.0" prefWidth="167.0" />
+		<Label layoutX="262.0" layoutY="37.0" text="Results" />
 		<Label layoutX="14.0" layoutY="54.0" text="From:">
 			<font>
 				<Font size="18.0" />
 			</font>
 		</Label>
-		<Label layoutX="14.0" layoutY="96.0" text="To:">
+		<Label layoutX="14.0" layoutY="86.0" text="To:">
 			<font>
 				<Font size="18.0" />
 			</font>
 		</Label>
-		<Button fx:id="searchButton" layoutX="180.0" layoutY="261.0" mnemonicParsing="false" onAction="#search" text="Search" />
-		<TextArea fx:id="tagText" layoutX="78.0" layoutY="142.0" prefHeight="105.0" prefWidth="174.0" />
-		<Label layoutX="14.0" layoutY="137.0" text="Tags:">
+		<Label layoutX="14.0" layoutY="116.0" text="Tags:">
 			<font>
 				<Font size="18.0" />
 			</font>
 		</Label>
-		<Label layoutX="14.0" layoutY="162.0" text="Enter as" />
-		<Label layoutX="14.0" layoutY="177.0" text="key=value" />
-		<Label layoutX="14.0" layoutY="192.0" text="one tag" />
-		<Button fx:id="createAlbumButton" layoutX="312.0" layoutY="261.0" mnemonicParsing="false" onAction="#createAlbum" prefHeight="25.0" prefWidth="94.0" text="Create Album" />
-      <Label layoutX="14.0" layoutY="207.0" text="per line" />
-      <Label layoutX="14.0" layoutY="223.0" text="please." />
-      <CheckBox fx:id="dateCheckBox" layoutX="33.0" layoutY="251.0" mnemonicParsing="false" text="Search Using Dates" />
-      <CheckBox fx:id="tagCheckBox" layoutX="33.0" layoutY="270.0" mnemonicParsing="false" text="Search Using Tags" />
+		<Label layoutX="14.0" layoutY="141.0" text="Enter as" />
+		<Label layoutX="14.0" layoutY="156.0" text="key=value" />
+		<Label layoutX="14.0" layoutY="171.0" text="one tag" />
+		<Label layoutX="14.0" layoutY="186.0" text="per line" />
+		<Label layoutX="14.0" layoutY="202.0" text="please." />
+		<CheckBox fx:id="dateCheckBox" layoutX="33.0" layoutY="251.0" mnemonicParsing="false" text="Search Using Dates" />
+		<CheckBox fx:id="tagCheckBox" layoutX="33.0" layoutY="270.0" mnemonicParsing="false" text="Search Using Tags" />
+      <CheckBox fx:id="tagMatchAllCheckBox" layoutX="33.0" layoutY="232.0" mnemonicParsing="false" text="Match All Tags" />
 	</children>
 </AnchorPane>

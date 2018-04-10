@@ -13,6 +13,10 @@ import java.util.ArrayList;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
+/**
+ * @author Joshua Li, Dingbang Chen
+ *
+ */
 public class UserList implements Serializable {
     private transient ObservableList<User> userList = null;
     private ArrayList<User> userListData = new ArrayList<User>();
@@ -22,13 +26,16 @@ public class UserList implements Serializable {
     private static final String storeFile = "users.dat";
 
     private UserList() {
-        User stock = new User("stock");
         // TODO: stock account
+        User stock = new User("stock");
         userListData.add(stock);
         stock.addAlbum("abc");
         setInstance();
     }
 
+    /**
+     * Serialize
+     */
     public static void writeApp() {
         try {
             File directory = new File(storeDir);
@@ -40,13 +47,14 @@ public class UserList implements Serializable {
             oos.close();
         } catch (FileNotFoundException e) {
             System.err.println("File not found");
-            e.printStackTrace();
         } catch (IOException e) {
             System.err.println("IOException");
-            e.printStackTrace();
         }
     }
 
+    /**
+     * @return Deserialized object
+     */
     public static UserList readApp() {
         UserList data = null;
         try {
@@ -56,35 +64,48 @@ public class UserList implements Serializable {
             ois.close();
         } catch (FileNotFoundException e) {
             // System.err.println("First time user (file not found)");
-            data = new UserList();
+            data = getInstance();
         } catch (IOException e) {
             System.err.println("IOException");
-            e.printStackTrace();
+            // e.printStackTrace();
         } catch (ClassNotFoundException e) {
             System.err.println("Class not found");
-            e.printStackTrace();
         }
         instance = data;
         return data;
     }
 
+    /**
+     * @return The instance (same instance if already created, singleton)
+     */
     public static UserList getInstance() {
         if (instance == null)
             instance = new UserList();
         return instance;
     }
 
+    /**
+     * Set instance
+     */
     public void setInstance() {
         if (instance == null)
             instance = this;
     }
 
+    /**
+     * @return The observable list of users
+     */
     public ObservableList<User> getUserList() {
         if (userList == null)
             userList = FXCollections.observableArrayList(userListData);
         return userList;
     }
 
+    /**
+     * Try to find the user with given name
+     * @param name
+     * @return User if found, null if not found
+     */
     public User findUser(String name) {
         for (User user : userListData)
             if (user.getName().equals(name))
@@ -92,6 +113,11 @@ public class UserList implements Serializable {
         return null;
     }
 
+    /**
+     * Add a new user
+     * @param name
+     * @return True if not duplicate
+     */
     public boolean addUser(String name) {
         if (userList == null)
             userList = FXCollections.observableArrayList(userListData);
@@ -101,6 +127,11 @@ public class UserList implements Serializable {
         return userList.add(user) && userListData.add(user);
     }
 
+    /**
+     * Delete a user
+     * @param user
+     * @return True if deleted
+     */
     public boolean deleteUser(User user) {
         if (userList == null)
             userList = FXCollections.observableArrayList(userListData);

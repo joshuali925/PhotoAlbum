@@ -1,8 +1,8 @@
 package app;
 
 import java.io.IOException;
-import java.io.Serializable;
 
+import controller.GeneralMethods;
 import controller.LoginController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -11,11 +11,16 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import model.UserList;
 
-public class Photos extends Application implements Serializable {
+/**
+ * @author Joshua Li, Dingbang Chen
+ *
+ */
+public class Photos extends Application {
 
     @Override
     public void start(Stage primaryStage) throws IOException {
-        UserList userList = UserList.readApp();
+        UserList.readApp();
+        GeneralMethods.setStage(primaryStage);
 
         FXMLLoader loginLoader = new FXMLLoader(getClass().getResource("/view/Login.fxml"));
         Pane loginPane = loginLoader.load();
@@ -27,6 +32,10 @@ public class Photos extends Application implements Serializable {
         primaryStage.show();
     }
 
+    /**
+     * @param args
+     * Driver program
+     */
     public static void main(String[] args) {
         launch(args);
     }

@@ -1,7 +1,6 @@
 package controller;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.Optional;
 
 import javafx.event.ActionEvent;
@@ -13,7 +12,11 @@ import javafx.stage.Stage;
 import model.User;
 import model.UserList;
 
-public class AdminController implements Serializable {
+/**
+ * @author Joshua Li, Dingbang Chen
+ *
+ */
+public class AdminController {
     @FXML
     Button logoutButton;
     @FXML
@@ -25,6 +28,12 @@ public class AdminController implements Serializable {
     private Stage primaryStage;
     private UserList list;
 
+    /**
+     * Initialize program and user list
+     * 
+     * @param primaryStage
+     *            The only window
+     */
     public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
         list = UserList.getInstance();
@@ -33,23 +42,42 @@ public class AdminController implements Serializable {
             userList.getSelectionModel().select(0);
     }
 
+    /**
+     * Logout
+     * 
+     * @param e
+     * @throws IOException
+     */
     public void logout(ActionEvent e) throws IOException {
-        new GeneralMethods().logout(primaryStage);
+        GeneralMethods.logout();
     }
 
+    /**
+     * Add new user
+     * 
+     * @param e
+     */
     public void create(ActionEvent e) {
         TextInputDialog dialog = new TextInputDialog();
+        dialog.initOwner(primaryStage);
         dialog.setHeaderText(null);
         dialog.setContentText("Username:");
 
         Optional<String> result = dialog.showAndWait();
-        if (result.isPresent() && !list.addUser(result.get().trim().toLowerCase())) {
+        if (!result.isPresent())
+            return;
+        if (!list.addUser(result.get().trim().toLowerCase())) {
             GeneralMethods.popAlert("Invalid or duplicate name.");
             return;
         }
         UserList.writeApp();
     }
 
+    /**
+     * Delete user
+     * 
+     * @param e
+     */
     public void delete(ActionEvent e) {
         User user = userList.getSelectionModel().getSelectedItem();
         if (user == null || !GeneralMethods.popConfirm("Delete this user?"))

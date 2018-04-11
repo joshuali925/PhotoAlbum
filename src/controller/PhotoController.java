@@ -60,9 +60,9 @@ public class PhotoController {
         photoList.setItems(album.getPhotoList());
         photoList.setCellFactory(cell -> new ListCell<Photo>() {
             @Override
-            public void updateItem(Photo name, boolean empty) {
+            protected void updateItem(Photo name, boolean empty) {
                 super.updateItem(name, empty);
-                if (empty) {
+                if (empty || name == null) {
                     setText(null);
                     setGraphic(null);
                 } else {

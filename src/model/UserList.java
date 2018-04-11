@@ -26,10 +26,14 @@ public class UserList implements Serializable {
     private static final String storeFile = "users.dat";
 
     private UserList() {
-        // TODO: stock account
         User stock = new User("stock");
         userListData.add(stock);
-        stock.addAlbum("abc");
+        stock.addAlbum("Demo");
+        stock.getAlbumList().get(0).addPhoto("./stock/1.jpg", 1400000000000L);
+        stock.getAlbumList().get(0).addPhoto("./stock/2.jpg", 1400000000000L);
+        stock.getAlbumList().get(0).addPhoto("./stock/3.jpg", 1400000000000L);
+        stock.getAlbumList().get(0).addPhoto("./stock/4.jpg", 1400000000000L);
+        stock.getAlbumList().get(0).addPhoto("./stock/5.jpg", 1400000000000L);
         setInstance();
     }
 
